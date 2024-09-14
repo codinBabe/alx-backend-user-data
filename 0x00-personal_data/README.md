@@ -1,2 +1,2 @@
 Personal_data
-<img src="./user-data.png" alt="memems">
+<img src="./user-data.png" alt="memes">
