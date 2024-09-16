@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import bcrypt
-""" Encrypting passwords """
+""" Encrypting and salting passwords """
 
 
 def hash_password(password: str) -> bytes:
