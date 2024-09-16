@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import bcrypt
-""" Encrypting and salting passwords """
+"""A module for encrypting passwords.
+"""
 
 
 def hash_password(password: str) -> bytes:
-    """ Encrypting passwords """
+    """ Hashing password using random salt """
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 
