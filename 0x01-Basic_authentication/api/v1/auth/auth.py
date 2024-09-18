@@ -1,8 +1,6 @@
 #!/usr/bin env python3
-""" Module of Auth api"""
-from flask import jsonify, request, abort
-from api.v1.views import app_views
-from models.user import User
+""" Module of API Authentification"""
+from flask import request
 from typing import List, TypeVar
 
 
