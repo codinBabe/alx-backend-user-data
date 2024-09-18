@@ -46,13 +46,16 @@ class BasicAuth(Auth):
         """Extracts the user credentials from a decoded Base64 string.
         """
         if type(decoded_base64_authorization_header) == str:
-            pattern = r'(?P<user>.+):(?P<password>.+)'
+            pattern = r'(?P<user>[^:]+):(?P<password>.+)'
             field_match = re.fullmatch(
-                pattern, decoded_base64_authorization_header)
+                pattern,
+                decoded_base64_authorization_header.strip(),
+            )
             if field_match is not None:
-                return (
-                    field_match.group('user'), field_match.group('password'))
-        return (None, None)
+                user = field_match.group('user')
+                password = field_match.group('password')
+                return user, password
+        return None, None
 
     def user_object_from_credentials(
             self, user_email: str, user_pwd: str) -> TypeVar('User'):
