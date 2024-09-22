@@ -50,19 +50,21 @@ def not_found(error) -> str:
 def before_request() -> None:
     """ Before request
     """
-    excluded_paths = [
-        '/api/v1/status/',
-        '/api/v1/unauthorized/',
-        '/api/v1/forbidden/',
-        '/api/v1/auth_session/login/']
-    if auth.require_auth(request.path, excluded_paths):
-        if auth.authorization_header(request
-                                     ) is None and auth.session_cookie(
-                                         request) is None:
-            abort(401)
-        if auth.current_user(request) is None:
-            abort(403)
-        request.current_user = auth.current_user(request)
+    if auth:
+        excluded_paths = [
+            "/api/v1/status/",
+            "/api/v1/unauthorized/",
+            "/api/v1/forbidden/",
+            "/api/v1/auth_session/login/",
+        ]
+        if auth.require_auth(request.path, excluded_paths):
+            user = auth.current_user(request)
+            if auth.authorization_header(request) is None and \
+                    auth.session_cookie(request) is None:
+                abort(401)
+            if user is None:
+                abort(403)
+            request.current_user = user
 
 
 if __name__ == "__main__":
