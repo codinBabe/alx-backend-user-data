@@ -4,8 +4,9 @@ import re
 import base64
 import binascii
 from flask import request
-from typing import List, TypeVar
+from typing import Tuple, TypeVar
 from api.v1.auth.auth import Auth
+from models.user import User
 
 
 class BasicAuth(Auth):
@@ -42,7 +43,7 @@ class BasicAuth(Auth):
     def extract_user_credentials(
             self,
             decoded_base64_authorization_header: str
-            ) -> (str, str):
+            ) -> Tuple[str, str]:
         """Extracts the user credentials from a decoded Base64 string.
         """
         if type(decoded_base64_authorization_header) == str:
