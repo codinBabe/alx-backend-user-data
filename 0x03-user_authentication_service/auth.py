@@ -26,7 +26,6 @@ class Auth:
         """
         try:
             self._db.find_user_by(email=email)
-            raise ValueError(f"User {email} already exists")
         except NoResultFound:
-            hashed_password = _hash_password(password)
-            return self._db.add_user(email, hashed_password)
+            return self._db.add_user(email, _hash_password(password))
+        raise ValueError("User {} already exists".format(email))
