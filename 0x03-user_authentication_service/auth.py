@@ -6,12 +6,19 @@ from user import User
 from db import DB
 import bcrypt
 from sqlalchemy.orm.exc import NoResultFound
+from uuid import uuid4
 
 
 def _hash_password(password: str) -> str:
     """Hash password
         """
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+
+
+def _generate_uuid() -> str:
+    """Generate a UUID
+    """
+    return str(uuid4())
 
 
 class Auth:
@@ -29,7 +36,7 @@ class Auth:
         except NoResultFound:
             return self._db.add_user(email, _hash_password(password))
         raise ValueError("User {} already exists".format(email))
-    
+
     def valid_login(self, email: str, password: str) -> bool:
         """Validate login
         """
@@ -43,3 +50,17 @@ class Auth:
         except NoResultFound:
             return False
         return False
+
+    def create_session(self, email: str) -> str:
+        """Create a session
+        """
+        User = None
+        try:
+            User = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return None
+        if User is None:
+            return None
+        session_id = _generate_uuid()
+        self._db.update_user(User.id, session_id=session_id)
+        return session_id
