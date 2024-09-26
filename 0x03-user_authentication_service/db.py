@@ -47,16 +47,34 @@ class DB:
     def find_user_by(self, **kwargs) -> User:
         """Find a user by the given keyword arguments
         """
-        field = [], value = []
-        for key, val in kwargs.items():
+        fields, values = [], []
+        for key, value in kwargs.items():
             if hasattr(User, key):
-                field.append(getattr(User, key))
-                value.append(val)
+                fields.append(getattr(User, key))
+                values.append(value)
             else:
                 raise InvalidRequestError()
         result = self._session.query(User).filter(
-            tuple_(*field).in_([tuple(value)])
+            tuple_(*fields).in_([tuple(values)])
         ).first()
         if result is None:
             raise NoResultFound()
         return result
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Update a user in the database
+        """
+        user = self.find_user_by(id=user_id)
+        if user is None:
+            return
+        update_source = {}
+        for key, value in kwargs.items():
+            if hasattr(User, key):
+                update_source[getattr(User, key)] = value
+            else:
+                raise ValueError()
+        self._session.query(User).filter(User.id == user_id).update(
+            update_source,
+            synchronize_session=False,
+        )
+        self._session.commit()
